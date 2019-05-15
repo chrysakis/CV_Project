@@ -1,10 +1,11 @@
 import os
 from PIL import Image
 import random
+from torchvision.transforms import ToTensor
 
 
 class SegmentationDataset:
-    def __init__(self, root, year='2012', image_set='all', transform=None):
+    def __init__(self, root, year='2009', image_set='all', transform=None):
         self.root = root
         self.year = year
         self.image_set = image_set
@@ -29,16 +30,16 @@ class SegmentationDataset:
         assert (len(self.images) == len(self.masks))
 
     def __getitem__(self, index):
-        input = Image.open(self.images[index])
-        output = Image.open(self.masks[index])
+        image = Image.open(self.images[index])
+        segmentation = Image.open(self.masks[index])
         if self.transform is not None:
             seed = random.randint(0, 10**6)
             random.seed(seed)
-            input = self.transform(input)
+            image = self.transform(image)
             random.seed(seed)
-            output = self.transform(output)
-            return input, output
-        return input, output
+            segmentation = self.transform(segmentation)
+            return image, segmentation
+        return image, segmentation
 
     def __len__(self):
         return len(self.images)

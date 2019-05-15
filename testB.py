@@ -1,11 +1,12 @@
 import torch
+from torch.autograd import Variable
 from model import UNet
 
-n = 1
-d = 572
-tensorA = torch.randn((n, 3, d, d))
+n, d = 5, 220
+tensorA = Variable(torch.randn((n, 3, d, d)))
 
-model = UNet(scale=16)
+model = UNet(scale=1)
 
 output = model(tensorA)
+
 print(output.shape)
