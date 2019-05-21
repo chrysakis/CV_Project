@@ -13,7 +13,7 @@ def decode_seg_maps(seg_maps):
     seg_maps = torch.sum(seg_maps, dim=0)
     seg_maps = seg_maps.type(torch.long)
     colors = get_colors(device)
-    return colors[seg_maps].to('cpu').numpy()
+    return colors[seg_maps].cpu().numpy()
 
 
 def encode_images(images):

@@ -1,4 +1,5 @@
 import torch
+from utils import encode_images
 
 
 def cross_entropy(prediction, truth):
@@ -8,6 +9,7 @@ def cross_entropy(prediction, truth):
 
     """
     eps = 1e-10
+    truth = encode_images(truth)
     return torch.sum(-1 * truth * torch.log(prediction + eps))
 
 
@@ -16,6 +18,7 @@ def dice(prediction, truth):
     Returns the negative dice coefficient between prediction and grounf truth.
 
     """
+    truth = encode_images(truth)
     numerator = -2 * torch.sum(prediction * truth)
     denominator = torch.sum(prediction**2 + truth**2)
     return numerator / denominator

@@ -1,7 +1,9 @@
 import os
 from PIL import Image
 import random
-from torchvision.transforms import ToTensor
+from torch.autograd import Variable
+from torchvision.transforms import Compose, Resize, RandomAffine, Pad, \
+                                   CenterCrop, RandomHorizontalFlip, ToTensor
 
 
 class SegmentationDataset:
@@ -9,7 +11,12 @@ class SegmentationDataset:
         self.root = root
         self.year = year
         self.image_set = image_set
-        self.transform = transform
+        if transform is not None:
+            self.transform_output = transform
+            transform_b = Compose(transform.transforms[:-2] + [transform.transforms[-1]])
+            self.transform_input = transform_b
+        else:
+            self.transform_input, self.transform_output = None, None
         voc_root = os.path.join(self.root, 'VOCdevkit/VOC2009/')
         image_dir = os.path.join(voc_root, 'JPEGImages')
         mask_dir = os.path.join(voc_root, 'SegmentationClass')
@@ -32,14 +39,20 @@ class SegmentationDataset:
     def __getitem__(self, index):
         image = Image.open(self.images[index])
         segmentation = Image.open(self.masks[index])
-        if self.transform is not None:
+        if self.transform_input is not None:
             seed = random.randint(0, 10**6)
             random.seed(seed)
-            image = self.transform(image)
+            image = Variable(self.transform_input(image))
             random.seed(seed)
-            segmentation = self.transform(segmentation)
+            segmentation = self.transform_output(segmentation)
             return image, segmentation
         return image, segmentation
 
     def __len__(self):
         return len(self.images)
+
+
+transform = Compose([Resize((500, 500)), Pad(100, padding_mode='reflect'),
+                     RandomAffine((-10, 10), (0.1, 0.1)), CenterCrop(420),
+                     Resize((284, 284)), RandomHorizontalFlip(), Resize((100, 100)),
+                     ToTensor()])
