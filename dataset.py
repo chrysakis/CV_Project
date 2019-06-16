@@ -54,5 +54,7 @@ class SegmentationDataset:
 
 transform = Compose([Resize((500, 500)), Pad(100, padding_mode='reflect'),
                      RandomAffine((-10, 10), (0.1, 0.1)), CenterCrop(420),
-                     Resize((284, 284)), RandomHorizontalFlip(), Resize((100, 100)),
+                     Resize((284, 284)), RandomHorizontalFlip(), Resize((284, 284)),
                      ToTensor()])
+
+transform_test = Compose([Resize((284, 284)), Resize((100, 100)), ToTensor()])

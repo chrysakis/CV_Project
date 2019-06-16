@@ -24,31 +24,31 @@ class UNet(Module):
         self.expanding_1 = Expanding(sizes[1], sizes[0])
 
         # Final layer
-        self.final = Sequential(Conv2d(sizes[0], 21, kernel_size=1), Softmax(dim=1))
+        self.final = Sequential(Conv2d(sizes[0], 2, kernel_size=1), Softmax(dim=1))
 
     def forward(self, x):
         # Contracting part of the network
-        print(f"x: {x.shape}")
+        # print(f"x: {x.shape}")
         x1 = self.contracting_1(x)
-        print(f"x1: {x1.shape}")
+        # print(f"x1: {x1.shape}")
         x2 = self.contracting_2(x1)
-        print(f"x2: {x2.shape}")
+        # print(f"x2: {x2.shape}")
         x3 = self.contracting_3(x2)
-        print(f"x3: {x3.shape}")
+        # print(f"x3: {x3.shape}")
         x4 = self.contracting_4(x3)
-        print(f"x4: {x4.shape}")
+        # print(f"x4: {x4.shape}")
         x5 = self.contracting_5(x4)
-        print(f"x5: {x5.shape}")
+        # print(f"x5: {x5.shape}")
 
         # Expanding part of the network
         z4 = self.expanding_4(x4, x5)
-        print(f"z4: {z4.shape}")
+        # print(f"z4: {z4.shape}")
         z3 = self.expanding_3(x3, z4)
-        print(f"z3: {z3.shape}")
+        # print(f"z3: {z3.shape}")
         z2 = self.expanding_2(x2, z3)
-        print(f"z2: {z2.shape}")
+        # print(f"z2: {z2.shape}")
         z1 = self.expanding_1(x1, z2)
-        print(f"z1: {z1.shape}")
+        # print(f"z1: {z1.shape}")
 
         # Final layer
         return self.final(z1)
